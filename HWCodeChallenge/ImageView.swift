@@ -29,7 +29,7 @@ struct ImageView: View {
 }
 
 #Preview("Loaded") {
-    ImageView(.loaded(.image(with: .blue)))
+    ImageView(.loaded(.image(color: .blue)))
 }
 
 #Preview("Loading") {
@@ -45,7 +45,7 @@ private enum ImageLoadError: Error {
 }
 
 extension UIImage {
-    static func image(with color: UIColor) -> UIImage {
+    static func image(color: UIColor) -> UIImage {
         let rect = CGRect(
             origin: .zero,
             size: CGSize(width: 1, height: 1)

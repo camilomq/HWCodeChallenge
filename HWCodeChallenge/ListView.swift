@@ -37,14 +37,20 @@ struct ListView<ViewModel: ListViewModeling>: View {
 
 private final class PreviewViewModel: ListViewModeling {
     
-    struct Item: ItemViewModeling {
+    final class Item: ItemViewModeling {
         let title: String
         let id = UUID()
-        var text: String { title }
+        let image: ResourceLoad<UIImage>
+        
+        init(title: String, image: ResourceLoad<UIImage>) {
+            self.title = title
+            self.image = image
+        }
     }
     
     var items = [
-        Item(title: "One"),
-        Item(title: "Two")
+        Item(title: "Blue", image: .loaded(.image(color: .blue))),
+        Item(title: "Orange", image: .loaded(.image(color: .orange))),
+        Item(title: "Still loading", image: .loading)
     ]
 }

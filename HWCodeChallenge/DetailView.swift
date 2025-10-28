@@ -5,24 +5,29 @@
 //  Created by Camilo Masso on 28/10/25.
 //
 
+import Combine
 import SwiftUI
 
-protocol DetailViewModeling {
-    var text: String { get }
+protocol DetailViewModeling: ObservableObject {
+    var image: ResourceLoad<UIImage> { get }
 }
 
 struct DetailView<ViewModel: DetailViewModeling>: View {
-    let viewModel: ViewModel
+    @ObservedObject private(set) var viewModel: ViewModel
     
     var body: some View {
-        Text(viewModel.text)
+        ImageView(viewModel.image)
     }
 }
 
 #Preview {
-    DetailView(viewModel: PreviewItem(text: "Some description"))
+    DetailView(viewModel: PreviewItem(image: .image(color: .orange)))
 }
 
-private struct PreviewItem: DetailViewModeling {
-    var text: String
+private final class PreviewItem: DetailViewModeling {
+    var image: ResourceLoad<UIImage>
+    
+    init(image: UIImage) {
+        self.image = ResourceLoad.loaded(image)
+    }
 }
