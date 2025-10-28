@@ -8,11 +8,15 @@
 import Combine
 import SwiftUI
 
-protocol ItemViewModeling: Identifiable, RowViewModeling, DetailViewModeling {}
+protocol ItemViewModeling: Identifiable, RowViewModeling, DetailViewModeling {
+    associatedtype Model
+    init(model: Model)
+}
 
 protocol ListViewModeling: ObservableObject {
     associatedtype ItemVM: ItemViewModeling
     var items: [ItemVM] { get }
+    func onAppear()
 }
 
 struct ListView<ViewModel: ListViewModeling>: View {
@@ -26,6 +30,9 @@ struct ListView<ViewModel: ListViewModeling>: View {
                 RowView(viewModel: itemVM)
             }
         }
+        .onAppear {
+            viewModel.onAppear()
+        }
     }
 }
 
@@ -38,19 +45,32 @@ struct ListView<ViewModel: ListViewModeling>: View {
 private final class PreviewViewModel: ListViewModeling {
     
     final class Item: ItemViewModeling {
-        let title: String
-        let id = UUID()
-        let image: ResourceLoad<UIImage>
+        struct Model {
+            let title: String
+            let id = UUID()
+            let image: ResourceLoad<UIImage>
+            
+            init(title: String, image: ResourceLoad<UIImage>) {
+                self.title = title
+                self.image = image
+            }
+        }
         
-        init(title: String, image: ResourceLoad<UIImage>) {
-            self.title = title
-            self.image = image
+        let model: Model
+        var title: String { model.title }
+        var id: UUID { model.id }
+        var image: ResourceLoad<UIImage> { model.image }
+        
+        init(model: Model) {
+            self.model = model
         }
     }
     
     var items = [
-        Item(title: "Blue", image: .loaded(.image(color: .blue))),
-        Item(title: "Orange", image: .loaded(.image(color: .orange))),
-        Item(title: "Still loading", image: .loading)
-    ]
+        Item.Model(title: "Blue", image: .loaded(.image(color: .blue))),
+        Item.Model(title: "Orange", image: .loaded(.image(color: .orange))),
+        Item.Model(title: "Still loading", image: .loading)
+    ].map { Item(model: $0) }
+    
+    func onAppear() {}
 }

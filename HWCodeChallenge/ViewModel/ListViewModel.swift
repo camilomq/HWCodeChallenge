@@ -12,17 +12,21 @@ where ItemVM: ItemViewModeling, APIFetcher: APIFetching, ItemVM.Model == APIFetc
     @Published var items: [ItemVM] = []
     
     private let apiService: APIFetcher
-    private var cancellables = Set<AnyCancellable>()
+    private var didStartFetching = false
     
     init(apiService: APIFetcher) {
         self.apiService = apiService
     }
     
-    func start() {
+    func onAppear() {
         fetchItems()
     }
     
     private func fetchItems() {
+        guard !didStartFetching else {
+            return
+        }
+        didStartFetching = true
         Task {
             do {
                 let dtos = try await apiService.fetch()
