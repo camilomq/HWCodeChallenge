@@ -8,7 +8,7 @@
 import Combine
 import SwiftUI
 
-protocol ItemViewModeling: Identifiable, RowViewModeling {}
+protocol ItemViewModeling: Identifiable, RowViewModeling, DetailViewModeling {}
 
 protocol ListViewModeling: ObservableObject {
     associatedtype ItemVM: ItemViewModeling
@@ -20,13 +20,19 @@ struct ListView<ViewModel: ListViewModeling>: View {
     
     var body: some View {
         List(viewModel.items) { itemVM in
-            RowView(viewModel: itemVM)
+            NavigationLink {
+                DetailView(viewModel: itemVM)
+            } label: {
+                RowView(viewModel: itemVM)
+            }
         }
     }
 }
 
 #Preview {
-    ListView(viewModel: PreviewViewModel())
+    NavigationStack {
+        ListView(viewModel: PreviewViewModel())
+    }
 }
 
 private final class PreviewViewModel: ListViewModeling {
@@ -34,6 +40,7 @@ private final class PreviewViewModel: ListViewModeling {
     struct Item: ItemViewModeling {
         let title: String
         let id = UUID()
+        var text: String { title }
     }
     
     var items = [
