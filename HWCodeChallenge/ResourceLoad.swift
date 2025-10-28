@@ -1,0 +1,14 @@
+//
+//  ResourceLoad.swift
+//  HWCodeChallenge
+//
+//  Created by Camilo Masso on 28/10/25.
+//
+
+import Foundation
+
+enum ResourceLoad<T> {
+    case loaded(T)
+    case loading
+    case error(Error, String)
+}
