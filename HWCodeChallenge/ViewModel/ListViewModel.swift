@@ -11,25 +11,25 @@ final class ListViewModel<ItemVM, APIFetcher>: ListViewModeling
 where ItemVM: ItemViewModeling, APIFetcher: APIFetching, ItemVM.Model == APIFetcher.DTO {
     @Published var items: [ItemVM] = []
     
-    private let apiService: APIFetcher
-    private var didStartFetching = false
+    private let apiFetcher: APIFetcher
+    private var hasAppeared = false
     
-    init(apiService: APIFetcher) {
-        self.apiService = apiService
+    init(apiFetcher: APIFetcher) {
+        self.apiFetcher = apiFetcher
     }
     
     func onAppear() {
+        guard !hasAppeared else {
+            return
+        }
+        hasAppeared = true
         fetchItems()
     }
     
     private func fetchItems() {
-        guard !didStartFetching else {
-            return
-        }
-        didStartFetching = true
         Task {
             do {
-                let dtos = try await apiService.fetch()
+                let dtos = try await apiFetcher.fetch()
                 items = dtos.map { ItemVM(model: $0) }
             } catch {
                 // Log error

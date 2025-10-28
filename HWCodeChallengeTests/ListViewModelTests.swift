@@ -40,13 +40,33 @@ final class ListViewModelTests: XCTestCase {
     
     func testOnAppear_apiFetcher_shouldCallFetch() {
         // Given
+        let expectation = XCTestExpectation(description: #function)
+        mockAPIFetcher.expectation = expectation
         let sut = SUT(apiFetcher: mockAPIFetcher)
         
         // When
         sut.onAppear()
         
+        wait(for: [expectation], timeout: 1.0)
+        
         // Then
-        XCTAssertTrue(self.mockAPIFetcher.didCallFetch)
+        XCTAssertNotEqual(self.mockAPIFetcher.fetchCallCount, 0)
+    }
+    
+    func testOnAppear_calledMultipleTimes_shouldFetchOnlyOnce() {
+        // Given
+        let expectation = XCTestExpectation(description: #function)
+        mockAPIFetcher.expectation = expectation
+        let sut = SUT(apiFetcher: mockAPIFetcher)
+        
+        // When
+        sut.onAppear()
+        sut.onAppear()
+        
+        wait(for: [expectation], timeout: 1.0)
+        
+        // Then
+        XCTAssertEqual(self.mockAPIFetcher.fetchCallCount, 1)
     }
     
     func testOnAppear_fetchesFromAPI_shouldUpdateItems() {
@@ -66,11 +86,11 @@ final class ListViewModelTests: XCTestCase {
 }
 
 private final class MockAPIFetcher: APIFetching {
-    var didCallFetch = false
+    var fetchCallCount = 0
     var expectation: XCTestExpectation?
     
     func fetch() async throws -> [String] {
-        didCallFetch = true
+        fetchCallCount += 1
         expectation?.fulfill()
         return (1...100).map { "\($0)" }
     }
