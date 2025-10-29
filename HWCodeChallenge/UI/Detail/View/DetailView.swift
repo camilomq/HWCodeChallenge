@@ -8,10 +8,6 @@
 import Combine
 import SwiftUI
 
-protocol DetailViewModeling: ObservableObject {
-    var image: ResourceLoad<UIImage> { get }
-}
-
 struct DetailView<ViewModel: DetailViewModeling>: View {
     @ObservedObject private(set) var viewModel: ViewModel
     

@@ -7,15 +7,15 @@
 
 import Combine
 
-final class ListViewModel<ItemVM, APIFetcher>: ListViewModeling
-where ItemVM: ItemViewModeling, APIFetcher: RemoteService, ItemVM.Model == APIFetcher.DTO {
+final class ListViewModel<ItemVM, APIService>: ListViewModeling
+where ItemVM: ItemViewModeling, APIService: RemoteService, ItemVM.Model == APIService.DTO {
     @Published var items: [ItemVM] = []
     
-    private let apiFetcher: APIFetcher
+    private let remoteService: APIService
     private var hasAppeared = false
     
-    init(apiFetcher: APIFetcher) {
-        self.apiFetcher = apiFetcher
+    init(remoteService: APIService) {
+        self.remoteService = remoteService
     }
     
     func onAppear() {
@@ -29,7 +29,7 @@ where ItemVM: ItemViewModeling, APIFetcher: RemoteService, ItemVM.Model == APIFe
     private func fetchItems() {
         Task {
             do {
-                let dtos = try await apiFetcher.fetch()
+                let dtos = try await remoteService.fetch()
                 items = dtos.map { ItemVM(model: $0) }
             } catch {
                 // Log error

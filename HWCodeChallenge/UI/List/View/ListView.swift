@@ -8,17 +8,6 @@
 import Combine
 import SwiftUI
 
-protocol ItemViewModeling: Identifiable, RowViewModeling, DetailViewModeling {
-    associatedtype Model
-    init(model: Model)
-}
-
-protocol ListViewModeling: ObservableObject {
-    associatedtype ItemVM: ItemViewModeling
-    var items: [ItemVM] { get }
-    func onAppear()
-}
-
 struct ListView<ViewModel: ListViewModeling>: View {
     @ObservedObject private(set) var viewModel: ViewModel
     

@@ -7,10 +7,6 @@
 
 import SwiftUI
 
-protocol RowViewModeling {
-    var title: String { get }
-}
-
 struct RowView<ViewModel: RowViewModeling>: View {
     let viewModel: ViewModel
     
