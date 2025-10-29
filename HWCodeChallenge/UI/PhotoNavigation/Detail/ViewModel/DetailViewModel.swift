@@ -10,7 +10,7 @@ import UIKit
 
 protocol DetailModel {
     var title: String { get }
-    var url: String { get }
+    var photoUrl: String { get }
     var ownerName: String { get }
 }
 
@@ -34,7 +34,7 @@ final class DetailViewModel<Model: DetailModel>: DetailViewModeling {
     @MainActor
     func startLoading() async {
         do {
-            let image = try await ImageLoader.shared.loadImage(url: model.url)
+            let image = try await ImageLoader.shared.loadImage(url: model.photoUrl)
             self.image = .loaded(image)
         } catch {
             image = .error(error, "Error loading image")

@@ -10,7 +10,7 @@ import UIKit
 
 protocol RowModel {
     var title: String { get }
-    var url: String { get }
+    var thumbnailUrl: String { get }
 }
 
 final class RowViewModel<Model: RowModel>: RowViewModeling {
@@ -29,7 +29,7 @@ final class RowViewModel<Model: RowModel>: RowViewModeling {
     @MainActor
     func start() async {
         do {
-            let image = try await ImageLoader.shared.loadImage(url: model.url)
+            let image = try await ImageLoader.shared.loadImage(url: model.thumbnailUrl)
             self.image = .loaded(image)
         } catch {
             image = .error(error, "?")

@@ -103,7 +103,8 @@ private final class MockRemoteService: RemoteService {
 
 private final class MockStringModel: ItemModel, Decodable {
     private let model: String
-    var url: String { model }
+    var thumbnailUrl: String { model }
+    var photoUrl: String { model }
     var title: String { model }
     var text: String { model }
     var ownerName: String { model }

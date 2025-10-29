@@ -9,7 +9,8 @@ import Foundation
 
 struct FlickrPhotoDTO: Decodable {
     enum CodingKeys: String, CodingKey {
-        case url = "url_t"
+        case thumbnailUrl = "url_t"
+        case largePhotoUrl = "url_l"
         case id
         case title
         case ownerName = "ownername"
@@ -17,8 +18,13 @@ struct FlickrPhotoDTO: Decodable {
     
     let id: String
     let title: String
-    let url: String
+    let thumbnailUrl: String
+    var largePhotoUrl: String?
     let ownerName: String
 }
 
-extension FlickrPhotoDTO: ItemModel {}
+extension FlickrPhotoDTO: ItemModel {
+    var photoUrl: String {
+        largePhotoUrl ?? thumbnailUrl
+    }
+}
