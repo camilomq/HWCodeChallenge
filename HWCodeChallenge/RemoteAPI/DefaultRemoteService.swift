@@ -27,6 +27,10 @@ class DefaultRemoteService<DTO: Decodable>: RemoteService {
             throw RemoteServiceError.invalidServerResponse
         }
         
+        return try decode(data: data)
+    }
+    
+    func decode(data: Data) throws -> [DTO] {
         return try JSONDecoder().decode([DTO].self, from: data)
     }
 }
