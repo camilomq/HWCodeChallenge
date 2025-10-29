@@ -19,7 +19,7 @@ final class FlickrRemoteService: DefaultRemoteService<FlickrPhotoDTO> {
             URLQueryItem(name: "format", value: "json"),
             URLQueryItem(name: "text", value: "dog"),
             URLQueryItem(name: "safe_search", value: "1"),
-            URLQueryItem(name: "extras", value: "url_t"),
+            URLQueryItem(name: "extras", value: "url_t,owner_name"),
             URLQueryItem(name: "nojsoncallback", value: "1"),
         ]
         

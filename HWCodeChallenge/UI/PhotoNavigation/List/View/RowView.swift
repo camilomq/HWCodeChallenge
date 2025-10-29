@@ -8,6 +8,12 @@
 import Combine
 import SwiftUI
 
+protocol RowViewModeling: ObservableObject {
+    var title: String { get }
+    var image: ResourceLoad<UIImage> { get }
+    func start() async
+}
+
 struct RowView<ViewModel: RowViewModeling>: View {
     @ObservedObject private(set) var viewModel: ViewModel
     

@@ -1,5 +1,5 @@
 //
-//  FlickrPhotoItemViewModel.swift
+//  RowViewModel.swift
 //  HWCodeChallenge
 //
 //  Created by Camilo Masso on 28/10/25.
@@ -8,16 +8,21 @@
 import Combine
 import UIKit
 
-final class FlickrPhotoItemViewModel: ItemViewModeling {
+protocol RowModel {
+    var title: String { get }
+    var url: String { get }
+}
+
+final class RowViewModel<Model: RowModel>: RowViewModeling {
     @Published var image: ResourceLoad<UIImage> = .loading
         
     var title: String {
         model.title
     }
     
-    private let model: FlickrPhotoDTO
+    private let model: Model
     
-    init(model: FlickrPhotoDTO) {
+    init(model: Model) {
         self.model = model
     }
     
@@ -27,7 +32,7 @@ final class FlickrPhotoItemViewModel: ItemViewModeling {
             let image = try await ImageLoader.shared.loadImage(url: model.url)
             self.image = .loaded(image)
         } catch {
-            image = .error(error, "Error loading image")
+            image = .error(error, "?")
         }
     }
 }

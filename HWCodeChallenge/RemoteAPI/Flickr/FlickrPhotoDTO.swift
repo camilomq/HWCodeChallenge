@@ -12,9 +12,13 @@ struct FlickrPhotoDTO: Decodable {
         case url = "url_t"
         case id
         case title
+        case ownerName = "ownername"
     }
     
     let id: String
     let title: String
     let url: String
+    let ownerName: String
 }
+
+extension FlickrPhotoDTO: ItemModel {}

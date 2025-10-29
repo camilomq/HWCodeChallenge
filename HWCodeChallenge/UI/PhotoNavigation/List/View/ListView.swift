@@ -8,15 +8,32 @@
 import Combine
 import SwiftUI
 
+protocol ItemViewModeling: Identifiable {
+    associatedtype Model
+    associatedtype RowVM: RowViewModeling
+    associatedtype DetailVM: DetailViewModeling
+    
+    var rowVM: RowVM { get }
+    var detailVM: DetailVM { get }
+    init(model: Model)
+}
+
+protocol ListViewModeling: ObservableObject {
+    associatedtype ItemVM: ItemViewModeling
+    var items: [ItemVM] { get }
+    var title: String { get }
+    func onAppear()
+}
+
 struct ListView<ViewModel: ListViewModeling>: View {
     @ObservedObject private(set) var viewModel: ViewModel
     
     var body: some View {
         List(viewModel.items) { itemVM in
             NavigationLink {
-                DetailView(viewModel: itemVM)
+                DetailView(viewModel: itemVM.detailVM)
             } label: {
-                RowView(viewModel: itemVM)
+                RowView(viewModel: itemVM.rowVM)
             }
         }
         .navigationTitle(viewModel.title)
@@ -39,20 +56,42 @@ private final class PreviewViewModel: ListViewModeling {
             let title: String
             let id = UUID()
             let image: ResourceLoad<UIImage>
-            
             init(title: String, image: ResourceLoad<UIImage>) {
                 self.title = title
                 self.image = image
             }
         }
         
+        final class RowVM: RowViewModeling {
+            let model: Model
+            var title: String { model.title }
+            var image: ResourceLoad<UIImage> { model.image }
+            init(model: Model) {
+                self.model = model
+            }
+            func start() async {}
+        }
+        
+        final class DetailVM: DetailViewModeling {
+            let model: Model
+            var title: String { model.title }
+            var text: String { model.title }
+            var image: ResourceLoad<UIImage> { model.image }
+            init(model: Model) {
+                self.model = model
+            }
+            func startLoading() async {}
+        }
+        
         let model: Model
-        var title: String { model.title }
         var id: UUID { model.id }
-        var image: ResourceLoad<UIImage> { model.image }
+        var rowVM: RowVM
+        var detailVM: DetailVM
         
         init(model: Model) {
             self.model = model
+            self.rowVM = RowVM(model: model)
+            self.detailVM = DetailVM(model: model)
         }
         
         func start() async {}

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject var viewModel = ListViewModel<FlickrPhotoItemViewModel, FlickrRemoteService>(
+    @StateObject var viewModel = ListViewModel<ItemViewModel, FlickrRemoteService>(
         title: "Flickr Photos",
         remoteService: .init()
     )
