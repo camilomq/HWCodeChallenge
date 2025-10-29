@@ -10,5 +10,6 @@ import Combine
 protocol ListViewModeling: ObservableObject {
     associatedtype ItemVM: ItemViewModeling
     var items: [ItemVM] { get }
+    var title: String { get }
     func onAppear()
 }

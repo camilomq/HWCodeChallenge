@@ -19,6 +19,7 @@ struct ListView<ViewModel: ListViewModeling>: View {
                 RowView(viewModel: itemVM)
             }
         }
+        .navigationTitle(viewModel.title)
         .onAppear {
             viewModel.onAppear()
         }
@@ -60,6 +61,8 @@ private final class PreviewViewModel: ListViewModeling {
         Item.Model(title: "Orange", image: .loaded(.image(color: .orange))),
         Item.Model(title: "Still loading", image: .loading)
     ].map { Item(model: $0) }
+    
+    var title: String { "Colors" }
     
     func onAppear() {}
 }

@@ -10,11 +10,16 @@ import Combine
 final class ListViewModel<ItemVM, APIService>: ListViewModeling
 where ItemVM: ItemViewModeling, APIService: RemoteService, ItemVM.Model == APIService.DTO {
     @Published var items: [ItemVM] = []
+    let title: String
     
     private let remoteService: APIService
     private var hasAppeared = false
     
-    init(remoteService: APIService) {
+    init(
+        title: String,
+        remoteService: APIService
+    ) {
+        self.title = title
         self.remoteService = remoteService
     }
     
@@ -27,7 +32,7 @@ where ItemVM: ItemViewModeling, APIService: RemoteService, ItemVM.Model == APISe
     }
     
     private func fetchItems() {
-        Task {
+        Task { @MainActor in
             do {
                 let dtos = try await remoteService.fetch()
                 items = dtos.map { ItemVM(model: $0) }
