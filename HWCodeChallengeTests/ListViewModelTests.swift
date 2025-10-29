@@ -11,7 +11,7 @@ import XCTest
 
 final class ListViewModelTests: XCTestCase {
 
-    private typealias SUT = ListViewModel<ItemViewModel, MockRemoteService>
+    private typealias SUT = ListViewModel<MockStringModel, MockRemoteService>
     
     private var mockRemoteService: MockRemoteService!
     private var cancellables: Set<AnyCancellable>!
@@ -32,7 +32,7 @@ final class ListViewModelTests: XCTestCase {
         let sut: SUT
         
         // When
-        sut = SUT(apiFetcher: mockRemoteService)
+        sut = SUT(title: "Some title", remoteService: mockRemoteService)
         
         // Then
         XCTAssertTrue(sut.items.isEmpty)
@@ -42,7 +42,7 @@ final class ListViewModelTests: XCTestCase {
         // Given
         let expectation = XCTestExpectation(description: #function)
         mockRemoteService.expectation = expectation
-        let sut = SUT(apiFetcher: mockRemoteService)
+        let sut = SUT(title: "Some title", remoteService: mockRemoteService)
         
         // When
         sut.onAppear()
@@ -57,7 +57,7 @@ final class ListViewModelTests: XCTestCase {
         // Given
         let expectation = XCTestExpectation(description: #function)
         mockRemoteService.expectation = expectation
-        let sut = SUT(apiFetcher: mockRemoteService)
+        let sut = SUT(title: "Some title", remoteService: mockRemoteService)
         
         // When
         sut.onAppear()
@@ -72,16 +72,21 @@ final class ListViewModelTests: XCTestCase {
     func testOnAppear_fetchesFromAPI_shouldUpdateItems() {
         // Given
         let expectation = XCTestExpectation(description: #function)
-        mockRemoteService.expectation = expectation
-        let sut = SUT(apiFetcher: mockRemoteService)
+        let sut = SUT(title: "Some title", remoteService: mockRemoteService)
+        
+        sut.$items
+            .dropFirst()
+            .sink { items in
+                // Then
+                XCTAssertFalse(items.isEmpty)
+                expectation.fulfill()
+            }
+            .store(in: &cancellables)
         
         // When
         sut.onAppear()
         
         wait(for: [expectation], timeout: 1.0)
-        
-        // Then
-        XCTAssertFalse(sut.items.isEmpty)
     }
 }
 
@@ -89,19 +94,21 @@ private final class MockRemoteService: RemoteService {
     var fetchCallCount = 0
     var expectation: XCTestExpectation?
     
-    func fetch() async throws -> [String] {
+    func fetch() async throws -> [MockStringModel] {
         fetchCallCount += 1
         expectation?.fulfill()
-        return (1...100).map { "\($0)" }
+        return (1...100).map { MockStringModel(model: "\($0)") }
     }
 }
 
-private final class ItemViewModel: ItemViewModeling {
-    var title: String
-    var image: LoadingResource<UIImage>
+private final class MockStringModel: ItemModel, Decodable {
+    private let model: String
+    var url: String { model }
+    var title: String { model }
+    var text: String { model }
+    var ownerName: String { model }
     
     init(model: String) {
-        title = model
-        image = .loading
+        self.model = model
     }
 }

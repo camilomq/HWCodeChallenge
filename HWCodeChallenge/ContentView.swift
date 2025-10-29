@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject var viewModel = ListViewModel<ItemViewModel, FlickrRemoteService>(
+    @StateObject var viewModel = ListViewModel(
         title: "Flickr Photos",
-        remoteService: .init()
+        remoteService: FlickrRemoteService()
     )
     
     var body: some View {
