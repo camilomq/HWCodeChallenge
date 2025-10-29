@@ -27,7 +27,7 @@ final class ListViewModelTests: XCTestCase {
         mockRemoteService = nil
     }
 
-    func testInit_itemsInitialValue_shouldBeEmpty() {
+    func testInit_itemsInitialValue_shouldBeLoading() {
         // Given
         let sut: SUT
         
@@ -35,7 +35,11 @@ final class ListViewModelTests: XCTestCase {
         sut = SUT(title: "Some title", remoteService: mockRemoteService)
         
         // Then
-        XCTAssertTrue(sut.items.isEmpty)
+        if case .loading = sut.items {
+            // Test succeeds
+        } else {
+            XCTFail()
+        }
     }
     
     func testOnAppear_apiFetcher_shouldCallFetch() {
@@ -76,10 +80,14 @@ final class ListViewModelTests: XCTestCase {
         
         sut.$items
             .dropFirst()
-            .sink { items in
-                // Then
-                XCTAssertFalse(items.isEmpty)
+            .sink { itemsResource in
                 expectation.fulfill()
+                // Then
+                guard case .loaded(let items) = itemsResource else {
+                    XCTFail()
+                    return
+                }
+                XCTAssertFalse(items.isEmpty)
             }
             .store(in: &cancellables)
         

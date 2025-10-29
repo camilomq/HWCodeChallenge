@@ -20,7 +20,7 @@ protocol ItemViewModeling: Identifiable {
 
 protocol ListViewModeling: ObservableObject {
     associatedtype ItemVM: ItemViewModeling
-    var items: [ItemVM] { get }
+    var items: LoadingResource<[ItemVM]> { get }
     var title: String { get }
     func onAppear()
 }
@@ -29,16 +29,28 @@ struct ListView<ViewModel: ListViewModeling>: View {
     @ObservedObject private(set) var viewModel: ViewModel
     
     var body: some View {
-        List(viewModel.items) { itemVM in
-            NavigationLink {
-                DetailView(viewModel: itemVM.detailVM)
-            } label: {
-                RowView(viewModel: itemVM.rowVM)
-            }
-        }
+        contentView
         .navigationTitle(viewModel.title)
         .onAppear {
             viewModel.onAppear()
+        }
+    }
+    
+    @ViewBuilder
+    private var contentView: some View {
+        switch viewModel.items {
+        case .loaded(let items):
+            List(items) { itemVM in
+                NavigationLink {
+                    DetailView(viewModel: itemVM.detailVM)
+                } label: {
+                    RowView(viewModel: itemVM.rowVM)
+                }
+            }
+        case .loading:
+            ProgressView()
+        case .error(_, let errorText):
+            Text(errorText)
         }
     }
 }
@@ -97,11 +109,13 @@ private final class PreviewViewModel: ListViewModeling {
         func start() async {}
     }
     
-    var items = [
+    var _items = [
         Item.Model(title: "Blue", image: .loaded(.image(color: .blue))),
         Item.Model(title: "Orange", image: .loaded(.image(color: .orange))),
         Item.Model(title: "Still loading", image: .loading)
     ].map { Item(model: $0) }
+    
+    var items: LoadingResource<[Item]> { .loaded(_items) }
     
     var title: String { "Colors" }
     

@@ -9,7 +9,7 @@ import Combine
 
 final class ListViewModel<Model, APIService>: ListViewModeling
 where Model: ItemModel, APIService: RemoteService, Model == APIService.DTO {
-    @Published var items: [ItemViewModel<Model>] = []
+    @Published var items: LoadingResource<[ItemViewModel<Model>]> = .loading
     let title: String
     
     private let remoteService: APIService
@@ -35,9 +35,10 @@ where Model: ItemModel, APIService: RemoteService, Model == APIService.DTO {
         Task { @MainActor in
             do {
                 let modelObjects = try await remoteService.fetch()
-                items = modelObjects.map { ItemViewModel(model: $0) }
+                let items = modelObjects.map { ItemViewModel(model: $0) }
+                self.items = .loaded(items)
             } catch {
-                // Log error
+                self.items = .error(error, "Error loading data")
             }
         }
     }
