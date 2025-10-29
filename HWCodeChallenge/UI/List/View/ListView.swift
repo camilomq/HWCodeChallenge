@@ -54,6 +54,8 @@ private final class PreviewViewModel: ListViewModeling {
         init(model: Model) {
             self.model = model
         }
+        
+        func start() async {}
     }
     
     var items = [

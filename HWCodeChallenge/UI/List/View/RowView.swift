@@ -5,20 +5,33 @@
 //  Created by Camilo Masso on 28/10/25.
 //
 
+import Combine
 import SwiftUI
 
 struct RowView<ViewModel: RowViewModeling>: View {
-    let viewModel: ViewModel
+    @ObservedObject private(set) var viewModel: ViewModel
     
     var body: some View {
-        Text(viewModel.title)
+        HStack {
+            ImageView(viewModel.image, contentMode: .fill)
+                .frame(width: 44, height: 44)
+                .clipped()
+            Text(viewModel.title)
+                .lineLimit(2)
+        }
+        .task {
+            await viewModel.start()
+        }
     }
 }
 
 #Preview {
-    RowView(viewModel: PreviewItem(title: "Some title"))
+    RowView(viewModel: PreviewItem())
 }
 
-private struct PreviewItem: RowViewModeling {
-    var title: String
+private final class PreviewItem: RowViewModeling {
+    var title: String = "Some title"
+    var image: ResourceLoad<UIImage> = .loaded(.image(color: .green))
+    
+    func start() async {}
 }

@@ -9,13 +9,14 @@ import SwiftUI
 
 struct ImageView: View {
     let image: ResourceLoad<UIImage>
+    let contentMode: ContentMode
     
     var body: some View {
         switch image {
         case .loaded(let image):
             Image(uiImage: image)
                 .resizable()
-                .aspectRatio(contentMode: .fit)
+                .aspectRatio(contentMode: contentMode)
         case .loading:
             ProgressView()
         case .error(_, let errorText):
@@ -23,8 +24,9 @@ struct ImageView: View {
         }
     }
     
-    init(_ image: ResourceLoad<UIImage>) {
+    init(_ image: ResourceLoad<UIImage>, contentMode: ContentMode = .fit) {
         self.image = image
+        self.contentMode = contentMode
     }
 }
 
