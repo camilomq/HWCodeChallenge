@@ -11,20 +11,20 @@ import XCTest
 
 final class ListViewModelTests: XCTestCase {
 
-    private typealias SUT = ListViewModel<ItemViewModel, MockAPIFetcher>
+    private typealias SUT = ListViewModel<ItemViewModel, MockRemoteService>
     
-    private var mockAPIFetcher: MockAPIFetcher!
+    private var mockRemoteService: MockRemoteService!
     private var cancellables: Set<AnyCancellable>!
     
     override func setUp() {
-        mockAPIFetcher = .init()
+        mockRemoteService = .init()
         cancellables = .init()
     }
     
     override func tearDown() {
         cancellables.removeAll()
         cancellables = nil
-        mockAPIFetcher = nil
+        mockRemoteService = nil
     }
 
     func testInit_itemsInitialValue_shouldBeEmpty() {
@@ -32,7 +32,7 @@ final class ListViewModelTests: XCTestCase {
         let sut: SUT
         
         // When
-        sut = SUT(apiFetcher: mockAPIFetcher)
+        sut = SUT(apiFetcher: mockRemoteService)
         
         // Then
         XCTAssertTrue(sut.items.isEmpty)
@@ -41,8 +41,8 @@ final class ListViewModelTests: XCTestCase {
     func testOnAppear_apiFetcher_shouldCallFetch() {
         // Given
         let expectation = XCTestExpectation(description: #function)
-        mockAPIFetcher.expectation = expectation
-        let sut = SUT(apiFetcher: mockAPIFetcher)
+        mockRemoteService.expectation = expectation
+        let sut = SUT(apiFetcher: mockRemoteService)
         
         // When
         sut.onAppear()
@@ -50,14 +50,14 @@ final class ListViewModelTests: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
         
         // Then
-        XCTAssertNotEqual(self.mockAPIFetcher.fetchCallCount, 0)
+        XCTAssertNotEqual(self.mockRemoteService.fetchCallCount, 0)
     }
     
     func testOnAppear_calledMultipleTimes_shouldFetchOnlyOnce() {
         // Given
         let expectation = XCTestExpectation(description: #function)
-        mockAPIFetcher.expectation = expectation
-        let sut = SUT(apiFetcher: mockAPIFetcher)
+        mockRemoteService.expectation = expectation
+        let sut = SUT(apiFetcher: mockRemoteService)
         
         // When
         sut.onAppear()
@@ -66,14 +66,14 @@ final class ListViewModelTests: XCTestCase {
         wait(for: [expectation], timeout: 1.0)
         
         // Then
-        XCTAssertEqual(self.mockAPIFetcher.fetchCallCount, 1)
+        XCTAssertEqual(self.mockRemoteService.fetchCallCount, 1)
     }
     
     func testOnAppear_fetchesFromAPI_shouldUpdateItems() {
         // Given
         let expectation = XCTestExpectation(description: #function)
-        mockAPIFetcher.expectation = expectation
-        let sut = SUT(apiFetcher: mockAPIFetcher)
+        mockRemoteService.expectation = expectation
+        let sut = SUT(apiFetcher: mockRemoteService)
         
         // When
         sut.onAppear()
@@ -85,7 +85,7 @@ final class ListViewModelTests: XCTestCase {
     }
 }
 
-private final class MockAPIFetcher: APIFetching {
+private final class MockRemoteService: RemoteService {
     var fetchCallCount = 0
     var expectation: XCTestExpectation?
     

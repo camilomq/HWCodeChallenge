@@ -8,7 +8,7 @@
 import Combine
 
 final class ListViewModel<ItemVM, APIFetcher>: ListViewModeling
-where ItemVM: ItemViewModeling, APIFetcher: APIFetching, ItemVM.Model == APIFetcher.DTO {
+where ItemVM: ItemViewModeling, APIFetcher: RemoteService, ItemVM.Model == APIFetcher.DTO {
     @Published var items: [ItemVM] = []
     
     private let apiFetcher: APIFetcher
