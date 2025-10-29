@@ -10,7 +10,7 @@ import SwiftUI
 
 protocol DetailViewModeling: ObservableObject {
     var title: String { get }
-    var image: ResourceLoad<UIImage> { get }
+    var image: LoadingResource<UIImage> { get }
     var text: String { get }
     func startLoading() async
 }
@@ -22,7 +22,7 @@ struct DetailView<ViewModel: DetailViewModeling>: View {
         VStack {
             Text(viewModel.title)
             Spacer()
-            ImageView(viewModel.image)
+            LoadingImageView(viewModel.image)
             Spacer()
             Text(viewModel.text)
         }
@@ -38,7 +38,7 @@ struct DetailView<ViewModel: DetailViewModeling>: View {
 
 private final class PreviewItem: DetailViewModeling {
     var title: String = "Some title"
-    var image: ResourceLoad<UIImage> = .loaded(.image(color: .orange))
+    var image: LoadingResource<UIImage> = .loaded(.image(color: .orange))
     var text: String = "Some text"
     
     func startLoading() async {}

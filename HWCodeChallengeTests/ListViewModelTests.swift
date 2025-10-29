@@ -98,7 +98,7 @@ private final class MockRemoteService: RemoteService {
 
 private final class ItemViewModel: ItemViewModeling {
     var title: String
-    var image: ResourceLoad<UIImage>
+    var image: LoadingResource<UIImage>
     
     init(model: String) {
         title = model

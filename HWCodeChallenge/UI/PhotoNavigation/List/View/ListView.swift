@@ -55,8 +55,8 @@ private final class PreviewViewModel: ListViewModeling {
         struct Model {
             let title: String
             let id = UUID()
-            let image: ResourceLoad<UIImage>
-            init(title: String, image: ResourceLoad<UIImage>) {
+            let image: LoadingResource<UIImage>
+            init(title: String, image: LoadingResource<UIImage>) {
                 self.title = title
                 self.image = image
             }
@@ -65,7 +65,7 @@ private final class PreviewViewModel: ListViewModeling {
         final class RowVM: RowViewModeling {
             let model: Model
             var title: String { model.title }
-            var image: ResourceLoad<UIImage> { model.image }
+            var image: LoadingResource<UIImage> { model.image }
             init(model: Model) {
                 self.model = model
             }
@@ -76,7 +76,7 @@ private final class PreviewViewModel: ListViewModeling {
             let model: Model
             var title: String { model.title }
             var text: String { model.title }
-            var image: ResourceLoad<UIImage> { model.image }
+            var image: LoadingResource<UIImage> { model.image }
             init(model: Model) {
                 self.model = model
             }

@@ -15,7 +15,7 @@ protocol DetailModel {
 }
 
 final class DetailViewModel<Model: DetailModel>: DetailViewModeling {
-    @Published var image: ResourceLoad<UIImage> = .loading
+    @Published var image: LoadingResource<UIImage> = .loading
     
     var title: String {
         model.title

@@ -1,5 +1,5 @@
 //
-//  ImageView.swift
+//  LoadingImageView.swift
 //  HWCodeChallenge
 //
 //  Created by Camilo Masso on 28/10/25.
@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct ImageView: View {
-    let image: ResourceLoad<UIImage>
+struct LoadingImageView: View {
+    let image: LoadingResource<UIImage>
     let contentMode: ContentMode
     
     var body: some View {
@@ -24,22 +24,22 @@ struct ImageView: View {
         }
     }
     
-    init(_ image: ResourceLoad<UIImage>, contentMode: ContentMode = .fit) {
+    init(_ image: LoadingResource<UIImage>, contentMode: ContentMode = .fit) {
         self.image = image
         self.contentMode = contentMode
     }
 }
 
 #Preview("Loaded") {
-    ImageView(.loaded(.image(color: .blue)))
+    LoadingImageView(.loaded(.image(color: .blue)))
 }
 
 #Preview("Loading") {
-    ImageView(.loading)
+    LoadingImageView(.loading)
 }
 
 #Preview("Error") {
-    ImageView(.error(ImageLoadError.unknown, "Some error text"))
+    LoadingImageView(.error(ImageLoadError.unknown, "Some error text"))
 }
 
 private enum ImageLoadError: Error {

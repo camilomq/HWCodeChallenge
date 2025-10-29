@@ -14,7 +14,7 @@ protocol RowModel {
 }
 
 final class RowViewModel<Model: RowModel>: RowViewModeling {
-    @Published var image: ResourceLoad<UIImage> = .loading
+    @Published var image: LoadingResource<UIImage> = .loading
         
     var title: String {
         model.title
